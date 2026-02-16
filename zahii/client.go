@@ -8,7 +8,9 @@ import (
 )
 
 type Client struct {
-	resty *resty.Client
+	resty         *resty.Client
+	superAppToken string
+	token         string
 
 	Customer struct {
 		Comment      *CustomerCommentService
@@ -46,11 +48,12 @@ const (
 )
 
 type Config struct {
-	BaseURL    string
-	Version    APIVersion
-	Username   string
-	Password   string
-	LocationID string
+	BaseURL       string
+	Version       APIVersion
+	Username      string
+	Password      string
+	LocationID    string
+	SuperAppToken string
 }
 
 func NewClient(config Config) (*Client, error) {
@@ -73,7 +76,7 @@ func NewClient(config Config) (*Client, error) {
 	r.SetBasicAuth(config.Username, config.Password)
 	r.SetHeader("Location-Id", config.LocationID)
 
-	c := &Client{resty: r}
+	c := &Client{resty: r, superAppToken: config.SuperAppToken}
 
 	c.Customer.Comment = &CustomerCommentService{client: c}
 	c.Customer.Coupon = &CouponService{client: c}
@@ -105,10 +108,28 @@ func (c *Client) SetLocationID(id string) *Client {
 	return c
 }
 
-func (c *Client) newRequest(locationID string) *resty.Request {
+func (c *Client) SetAuthToken(token string) *Client {
+	c.token = token
+	c.resty.SetAuthToken(token)
+	return c
+}
+
+func (c *Client) newBaseRequest(locationID string) *resty.Request {
 	r := c.resty.R()
 	if locationID != "" {
 		r.SetHeader("Location-Id", locationID)
+	}
+	return r
+}
+
+func (c *Client) newRequest(locationID string) *resty.Request {
+	if c.superAppToken != "" {
+		_, _ = c.SuperApp.Authenticate.AuthenticateAndSetToken(c.superAppToken)
+	}
+
+	r := c.newBaseRequest(locationID)
+	if c.token != "" {
+		r.SetAuthToken(c.token)
 	}
 	return r
 }

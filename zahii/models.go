@@ -372,6 +372,12 @@ type AuthenticateResponse struct {
 	BaseResponse
 	Body struct {
 		Token string `json:"token"`
+		User  struct {
+			Email     string `json:"email"`
+			Phone     string `json:"phone"`
+			EbarimtNo string `json:"ebarimt_no"`
+			ID        string `json:"id"`
+		} `json:"user"`
 	} `json:"body"`
 }
 
