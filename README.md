@@ -11,7 +11,7 @@ go get github.com/techpartners-asia/grocery-integration
 ## Overview
 
 This SDK provides a convenient, strongly-typed wrapper around the Zahii Grocery API. It uses `resty.dev/v3` for underlying HTTP networking and exposes services organized by auth requirement:
-- **Public** (no auth): `Product`, `Category`, `Store`, `Reference`, `Loyalty`, `Tag`, `Branch`, `OrderMessage`. Access via `client.Product`, `client.Category`, etc.
+- **Public** (no auth): `Product`, `Category`, `Store`, `Reference`, `Loyalty`, `Tag`, `Branch`. Access via `client.Product`, `client.Category`, etc.
 - **User** (auth required): `Order`, `Location`, `Comment`, `Wishlist`, `Profile`, `Coupon`, `Imap`, `Notification`, `Reference`. Access via `client.User.Order`, `client.User.Location`, etc.
 - **Auth**: `Customer` (e.g. `IsUserExists`). Access via `client.Customer`.
 - **SuperApp**: `Authenticate`. Access via `client.SuperApp.Authenticate`.
@@ -185,8 +185,6 @@ For more details, see `examples/basic_usage/main.go`.
 - `Store`: Location and active branches data.
 - `Tag`: Product metadata tags and labels.
 - `Branch`: List branches.
-- `OrderMessage`: Order messaging utilities.
-
 ### User Services (auth required)
 - `Comment`: Product and shopping/driver reviews.
 - `Coupon`: View and apply coupons.

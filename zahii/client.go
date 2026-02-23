@@ -21,8 +21,6 @@ type Client struct {
 	Loyalty      *LoyaltyService
 	Tag          *TagService
 	Branch       *BranchService
-	OrderMessage *OrderMessageService
-
 	User struct {
 		Comment      *CommentService
 		Coupon       *CouponService
@@ -114,8 +112,6 @@ func NewClient(config Config) (*Client, error) {
 	c.Tag = &TagService{client: c}
 	c.Customer = &CustomerService{client: c}
 	c.Branch = &BranchService{client: c}
-	c.OrderMessage = &OrderMessageService{client: c}
-
 	c.User.Comment = &CommentService{client: c}
 	c.User.Coupon = &CouponService{client: c}
 	c.User.Imap = &ImapService{client: c}

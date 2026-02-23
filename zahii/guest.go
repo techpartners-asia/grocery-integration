@@ -39,13 +39,6 @@ func (s *LoyaltyService) SetLocationID(id string) *LoyaltyService {
 	return s
 }
 
-type OrderMessageService service
-
-func (s *OrderMessageService) SetLocationID(id string) *OrderMessageService {
-	s.locationID = id
-	return s
-}
-
 type ListCategoryRequest struct {
 	Active bool `json:"active"`
 }
@@ -319,44 +312,6 @@ func (s *LoyaltyService) GetInvitation() (*GetInvitationResponse, error) {
 	_, err := s.client.newRequest(s.locationID).
 		SetResult(&result).
 		Get("/loyalty/invitation/get-invitation")
-	if err != nil {
-		return nil, err
-	}
-	return &result, nil
-}
-
-type OrderMessage struct {
-	Base
-	Title string `json:"title"`
-	Body  string `json:"body"`
-}
-
-type GetOrderMessageResponse struct {
-	BaseResponse
-	Body *OrderMessage `json:"body"`
-}
-
-func (s *OrderMessageService) Get() (*GetOrderMessageResponse, error) {
-	var result GetOrderMessageResponse
-	_, err := s.client.newRequest(s.locationID).
-		SetResult(&result).
-		Get("/order-message/get")
-	if err != nil {
-		return nil, err
-	}
-	return &result, nil
-}
-
-type ListOrderMessageResponse struct {
-	BaseResponse
-	Body []*OrderMessage `json:"body"`
-}
-
-func (s *OrderMessageService) List() (*ListOrderMessageResponse, error) {
-	var result ListOrderMessageResponse
-	_, err := s.client.newRequest(s.locationID).
-		SetResult(&result).
-		Get("/order-message/list")
 	if err != nil {
 		return nil, err
 	}
