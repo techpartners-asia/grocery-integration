@@ -14,6 +14,13 @@ type ListBranchResponse struct {
 	Body []*Branch `json:"body"`
 }
 
+type Polygon struct {
+	Base
+	Pins     string `json:"pins"`
+	Name     string `json:"name"`
+	BranchID uint   `json:"branch_id"`
+}
+
 func (s *BranchService) ListBranch() (*ListBranchResponse, error) {
 	var result ListBranchResponse
 	_, err := s.client.newRequest(s.locationID).
@@ -119,8 +126,13 @@ func (s *LocationService) List() (*ListLocationResponse, error) {
 	return &result, nil
 }
 
-func (s *LocationService) ListPolygon() (*BaseResponse, error) {
-	var result BaseResponse
+type ListPolygonResponse struct {
+	BaseResponse
+	Body []*Polygon `json:"body"`
+}
+
+func (s *LocationService) ListPolygon() (*ListPolygonResponse, error) {
+	var result ListPolygonResponse
 	_, err := s.client.newRequest(s.locationID).
 		SetResult(&result).
 		Get("/customer/location/polygon/list")

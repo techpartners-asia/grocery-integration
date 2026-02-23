@@ -2,6 +2,7 @@ package zahii
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	"resty.dev/v3"
@@ -11,6 +12,7 @@ type Client struct {
 	resty         *resty.Client
 	superAppToken string
 	token         string
+	locationID    string
 
 	Customer struct {
 		Branch       *BranchService
@@ -103,7 +105,7 @@ func NewClient(config Config) (*Client, error) {
 		})
 	}
 
-	c := &Client{resty: r, superAppToken: config.SuperAppToken}
+	c := &Client{resty: r, superAppToken: config.SuperAppToken, locationID: config.LocationID}
 
 	c.Customer.Branch = &BranchService{client: c}
 	c.Customer.Comment = &CustomerCommentService{client: c}
@@ -132,7 +134,33 @@ func NewClient(config Config) (*Client, error) {
 }
 
 func (c *Client) SetLocationID(id string) *Client {
+	c.locationID = id
 	c.resty.SetHeader("Location-Id", id)
+
+	// Propagate to services
+	if c.Customer.Branch != nil {
+		c.Customer.Branch.SetLocationID(id)
+	}
+	if c.Customer.Order != nil {
+		c.Customer.Order.SetLocationID(id)
+	}
+	if c.Customer.Location != nil {
+		c.Customer.Location.SetLocationID(id)
+	}
+	if c.Customer.Wishlist != nil {
+		c.Customer.Wishlist.SetLocationID(id)
+	}
+	if c.Customer.Comment != nil {
+		c.Customer.Comment.SetLocationID(id)
+	}
+
+	if c.Guest.Product != nil {
+		c.Guest.Product.SetLocationID(id)
+	}
+	if c.Guest.Category != nil {
+		c.Guest.Category.SetLocationID(id)
+	}
+
 	return c
 }
 
@@ -144,8 +172,13 @@ func (c *Client) SetAuthToken(token string) *Client {
 
 func (c *Client) newBaseRequest(locationID string) *resty.Request {
 	r := c.resty.R()
-	if locationID != "" {
-		r.SetHeader("Location-Id", locationID)
+	locID := locationID
+	if locID == "" {
+		locID = c.locationID
+	}
+	if locID != "" {
+		r.SetHeader("Location-Id", locID)
+		// log.Printf("[SDK DEBUG] Set Location-Id header to %s", locID)
 	}
 	return r
 }
@@ -159,6 +192,7 @@ func (c *Client) newRequest(locationID string) *resty.Request {
 	if c.token != "" {
 		r.SetAuthToken(c.token)
 	}
+	log.Printf("[SDK DEBUG] Request Headers for %s: %v", r.URL, r.Header)
 	return r
 }
 
