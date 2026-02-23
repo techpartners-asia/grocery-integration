@@ -20,7 +20,7 @@ func (s *WishlistService) List() (*ListWishlistResponse, error) {
 	var result ListWishlistResponse
 	_, err := s.client.newRequest(s.locationID).
 		SetResult(&result).
-		Get("/customer/wishlist/list")
+		Get("/customer/wishlist/base/list")
 	if err != nil {
 		return nil, err
 	}
@@ -28,7 +28,9 @@ func (s *WishlistService) List() (*ListWishlistResponse, error) {
 }
 
 type CreateWishlistRequest struct {
-	Name string `json:"name"`
+	Name         string `json:"name"`
+	ProductID    uint   `json:"product_id,omitempty"`
+	ProductSetID uint   `json:"product_set_id,omitempty"`
 }
 
 func (s *WishlistService) Create(req CreateWishlistRequest) (*BaseResponse, error) {
@@ -36,7 +38,7 @@ func (s *WishlistService) Create(req CreateWishlistRequest) (*BaseResponse, erro
 	_, err := s.client.newRequest(s.locationID).
 		SetBody(req).
 		SetResult(&result).
-		Post("/customer/wishlist/create")
+		Post("/customer/wishlist/base/create")
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +50,7 @@ func (s *WishlistService) Delete(id uint) (*BaseResponse, error) {
 	_, err := s.client.newRequest(s.locationID).
 		SetPathParam("id", fmt.Sprintf("%d", id)).
 		SetResult(&result).
-		Delete("/customer/wishlist/delete/{id}")
+		Delete("/customer/wishlist/base/delete/{id}")
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +67,7 @@ func (s *WishlistService) Get(id uint) (*GetWishlistResponse, error) {
 	_, err := s.client.newRequest(s.locationID).
 		SetPathParam("id", fmt.Sprintf("%d", id)).
 		SetResult(&result).
-		Get("/customer/wishlist/get/{id}")
+		Get("/customer/wishlist/base/get/{id}")
 	if err != nil {
 		return nil, err
 	}
@@ -78,7 +80,7 @@ func (s *WishlistService) Update(id uint, req CreateWishlistRequest) (*BaseRespo
 		SetPathParam("id", fmt.Sprintf("%d", id)).
 		SetBody(req).
 		SetResult(&result).
-		Put("/customer/wishlist/update/{id}")
+		Put("/customer/wishlist/base/update/{id}")
 	if err != nil {
 		return nil, err
 	}

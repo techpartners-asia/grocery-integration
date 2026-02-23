@@ -16,8 +16,15 @@ func (s *CustomerCommentService) SetLocationID(id string) *CustomerCommentServic
 	return s
 }
 
-func (s *CustomerCommentService) Create(req CreateCommentRequest) (*BaseResponse, error) {
-	var result BaseResponse
+type CreateCommentResponse struct {
+	BaseResponse
+	Body struct {
+		ID uint `json:"id"`
+	} `json:"body"`
+}
+
+func (s *CustomerCommentService) Create(req CreateCommentRequest) (*CreateCommentResponse, error) {
+	var result CreateCommentResponse
 	_, err := s.client.newRequest(s.locationID).
 		SetBody(req).
 		SetResult(&result).
@@ -46,17 +53,26 @@ func (s *CustomerCommentService) Delete(req DeleteCommentRequest) (*BaseResponse
 
 type ListCommentResponse struct {
 	BaseResponse
-	Body []struct {
-		ID    uint   `json:"id"`
-		Body  string `json:"body"`
-		Rate  int    `json:"rate"`
-		Title string `json:"title"`
+	Body struct {
+		Items []struct {
+			ID    uint   `json:"id"`
+			Body  string `json:"body"`
+			Rate  int    `json:"rate"`
+			Title string `json:"title"`
+		} `json:"items"`
+		Total int `json:"total"`
 	} `json:"body"`
 }
 
-func (s *CustomerCommentService) List() (*ListCommentResponse, error) {
+type ListCommentRequest struct {
+	Limit int `json:"limit,omitempty"`
+	Page  int `json:"page,omitempty"`
+}
+
+func (s *CustomerCommentService) List(req ListCommentRequest) (*ListCommentResponse, error) {
 	var result ListCommentResponse
 	_, err := s.client.newRequest(s.locationID).
+		SetBody(req).
 		SetResult(&result).
 		Post("/customer/comment/list")
 	if err != nil {

@@ -13,6 +13,7 @@ type Client struct {
 	token         string
 
 	Customer struct {
+		Branch       *BranchService
 		Comment      *CustomerCommentService
 		Coupon       *CouponService
 		Imap         *CustomerImapService
@@ -80,6 +81,8 @@ func NewClient(config Config) (*Client, error) {
 
 	cleanBaseURL := fmt.Sprintf("%s/%s", strings.TrimRight(baseURL, "/"), strings.TrimPrefix(string(version), "/"))
 	r.SetBaseURL(cleanBaseURL)
+	r.SetResponseBodyUnlimitedReads(true)
+	r.SetAllowMethodDeletePayload(true)
 
 	r.SetBasicAuth(config.Username, config.Password)
 	r.SetHeader("Location-Id", config.LocationID)
@@ -102,6 +105,7 @@ func NewClient(config Config) (*Client, error) {
 
 	c := &Client{resty: r, superAppToken: config.SuperAppToken}
 
+	c.Customer.Branch = &BranchService{client: c}
 	c.Customer.Comment = &CustomerCommentService{client: c}
 	c.Customer.Coupon = &CouponService{client: c}
 	c.Customer.Imap = &CustomerImapService{client: c}
@@ -147,7 +151,7 @@ func (c *Client) newBaseRequest(locationID string) *resty.Request {
 }
 
 func (c *Client) newRequest(locationID string) *resty.Request {
-	if c.superAppToken != "" {
+	if c.superAppToken != "" && c.token == "" {
 		_, _ = c.SuperApp.Authenticate.AuthenticateAndSetToken(c.superAppToken)
 	}
 
