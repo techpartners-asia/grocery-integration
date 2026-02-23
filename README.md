@@ -63,7 +63,10 @@ client.SetAuthToken("eyJhbGciOi...")
 ```
 
 ### Global Error Handling
-You can optionally intercept and normalize `resty.Response` errors using the `ErrorHandler` in the SDK configuration. This is automatically invoked whenever a non-2xx status code is returned. The error you return from this hook will be passed directly back as the `err` result from any SDK method call.
+
+By default, `resty` does not treat HTTP error status codes (like 400 or 500) as Go `error`s. 
+- **If `ErrorHandler` is NOT set:** SDK methods will return a `nil` error and an empty response object when the backend responds with an HTTP error. You will not be notified of the API failure.
+- **If `ErrorHandler` IS set:** The hook intercepts any non-2xx response. The custom error you return from this hook will be passed directly back as the `err` result to the caller of any SDK method.
 
 ```go
 type APIError struct {
@@ -90,6 +93,29 @@ if err != nil {
     // this prints: "API failed with 401: Invalid token"
     log.Println(err.Error())
 }
+```
+
+### Logging & Debugging
+You can catch and inspect every `Request` and `Response` pair that flows through the SDK by providing a custom `RequestResponseLogger` hook.
+
+This is extremely useful if you want to pipe API requests into your own instrumentation, auditing logs, or debugging tools (like Datadog, Splunk, or JSON loggers).
+
+```go
+// Using a custom hook to catch and log all requests
+client, err := zahii.NewClient(zahii.Config{
+    BaseURL: "https://api.zahii.mn/api",
+    
+    // Optional: catch every request/response explicitly
+    RequestResponseLogger: func(req *resty.Request, resp *resty.Response) {
+        log.Printf("[ZAHII-SDK] %s %s -> HTTP %d (Took %v)", 
+            req.Method, 
+            req.URL, 
+            resp.StatusCode(), 
+            resp.Time(),
+        )
+        // You can also inspect req.Body, resp.Body(), etc.
+    },
+})
 ```
 
 ### Examples

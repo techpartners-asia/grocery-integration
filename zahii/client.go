@@ -56,6 +56,9 @@ type Config struct {
 	SuperAppToken string
 	RestyClient   *resty.Client
 	ErrorHandler  func(resp *resty.Response) error
+
+	// Optional hook to inspect every request and response pair after completion
+	RequestResponseLogger func(req *resty.Request, resp *resty.Response)
 }
 
 func NewClient(config Config) (*Client, error) {
@@ -86,6 +89,13 @@ func NewClient(config Config) (*Client, error) {
 			if resp.IsError() {
 				return config.ErrorHandler(resp)
 			}
+			return nil
+		})
+	}
+
+	if config.RequestResponseLogger != nil {
+		r.AddResponseMiddleware(func(c *resty.Client, resp *resty.Response) error {
+			config.RequestResponseLogger(resp.Request, resp)
 			return nil
 		})
 	}
