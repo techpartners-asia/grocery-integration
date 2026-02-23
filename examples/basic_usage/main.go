@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/techpartners-asia/grocery-integration/zahii"
+	"resty.dev/v3"
 )
 
 func main() {
@@ -13,6 +14,18 @@ func main() {
 		BaseURL:  "https://api.zahii.mn/api",
 		Username: "super-app",
 		Password: "password-here",
+
+		// Optional: catch every request/response explicitly
+		RequestResponseLogger: func(req *resty.Request, resp *resty.Response) {
+			log.Printf("[ZAHII-SDK] %s %s -> HTTP %d (Took %v)",
+				req.Method,
+				req.URL,
+				resp.StatusCode(),
+				resp.Duration(),
+			)
+			log.Printf("Request Body: %v", req.Body)
+			log.Printf("Response Body: %s", resp.String())
+		},
 	})
 	if err != nil {
 		log.Fatalf("Error initializing client: %v", err)

@@ -111,9 +111,11 @@ client, err := zahii.NewClient(zahii.Config{
             req.Method, 
             req.URL, 
             resp.StatusCode(), 
-            resp.Time(),
+            resp.Duration(),
         )
-        // You can also inspect req.Body, resp.Body(), etc.
+        // You can inspect the payloads like this:
+        log.Printf("Request Body: %v", req.Body)
+        log.Printf("Response Body: %s", resp.String())
     },
 })
 ```
