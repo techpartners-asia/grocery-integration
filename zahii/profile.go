@@ -18,6 +18,28 @@ func (s *CustomerProfileService) GetCredit() (*BaseResponse, error) {
 	return &result, nil
 }
 
+type InfoRequestDTO struct {
+	BirthDate string `json:"birth_date,omitempty"`
+	Email     string `json:"email,omitempty"`
+	FirstName string `json:"first_name,omitempty"`
+	Gender    string `json:"gender,omitempty"`
+	LastName  string `json:"last_name,omitempty"`
+	Register  string `json:"register,omitempty"`
+	PushToken string `json:"push_token,omitempty"`
+}
+
+func (s *CustomerProfileService) GetProfile(req InfoRequestDTO) (*BaseResponse, error) {
+	var result BaseResponse
+	_, err := s.client.newRequest(s.locationID).
+		SetBody(req).
+		SetResult(&result).
+		Post("/customer/user/info")
+	if err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
 type UpdateProfileRequest struct {
 	BirthDate string `json:"birth_date,omitempty"`
 	Email     string `json:"email,omitempty"`

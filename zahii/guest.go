@@ -65,11 +65,9 @@ type ListCategoryResponse struct {
 func (s *GuestCategoryService) List(req ListCategoryRequest) (*ListCategoryResponse, error) {
 	var result ListCategoryResponse
 	_, err := s.client.newRequest(s.locationID).
-		SetQueryParams(map[string]string{
-			"active": fmt.Sprintf("%v", req.Active),
-		}).
+		SetBody(req).
 		SetResult(&result).
-		Get("/guest/category/list")
+		Post("/guest/category/list")
 	if err != nil {
 		return nil, err
 	}
@@ -170,11 +168,18 @@ func (s *GuestCustomerService) IsUserExists(firebaseUID string) (*UserExistsResp
 	return &result, nil
 }
 
-func (s *GuestProductService) ListSimilar(id uint) (*ListProductResponse, error) {
+type SimilarProductRequest struct {
+	ProductID uint `json:"product_id"`
+	Limit     int  `json:"limit,omitempty"`
+	Page      int  `json:"page,omitempty"`
+}
+
+func (s *GuestProductService) ListSimilar(req SimilarProductRequest) (*ListProductResponse, error) {
 	var result ListProductResponse
 	_, err := s.client.newRequest(s.locationID).
+		SetBody(req).
 		SetResult(&result).
-		Post(fmt.Sprintf("/guest/product/similar-product/list/%d", id))
+		Post("/guest/product/similar-product/list")
 	if err != nil {
 		return nil, err
 	}
@@ -229,11 +234,32 @@ type TotalProductResponse struct {
 	Body int `json:"body"`
 }
 
-func (s *GuestProductService) GetTotal() (*TotalProductResponse, error) {
+type TotalProductRequest struct {
+	CategoryID         *uint   `json:"category_id,omitempty"`
+	ClassificationCode *string `json:"classification_code,omitempty"`
+	IsCityTax          *bool   `json:"is_city_tax,omitempty"`
+	TaxProductCode     *string `json:"tax_product_code,omitempty"`
+	TaxType            *string `json:"tax_type,omitempty"`
+	TagID              *uint   `json:"tag_id,omitempty"`
+	CategoryIDs        []uint  `json:"category_ids,omitempty"`
+	Popular            *bool   `json:"popular,omitempty"`
+	IsNewlyAdded       *bool   `json:"is_newly_added,omitempty"`
+	TodaysSuggest      *bool   `json:"todays_suggest,omitempty"`
+	IsSale             *bool   `json:"is_sale,omitempty"`
+	StoreID            *uint   `json:"store_id,omitempty"`
+	IsPromotion        *bool   `json:"is_promotion,omitempty"`
+	Active             *bool   `json:"active,omitempty"`
+	BranchID           *uint   `json:"branch_id,omitempty"`
+	IsPackage          *bool   `json:"is_package,omitempty"`
+	Search             string  `json:"search,omitempty"`
+}
+
+func (s *GuestProductService) GetTotal(req TotalProductRequest) (*TotalProductResponse, error) {
 	var result TotalProductResponse
 	_, err := s.client.newRequest(s.locationID).
+		SetBody(req).
 		SetResult(&result).
-		Get("/guest/product/total")
+		Post("/guest/product/total")
 	if err != nil {
 		return nil, err
 	}
@@ -245,9 +271,16 @@ type ListStoreResponse struct {
 	Body []*Store `json:"body"`
 }
 
-func (s *GuestStoreService) List() (*ListStoreResponse, error) {
+type ListStoreRequest struct {
+	Search string `json:"search,omitempty"`
+	Limit  int    `json:"limit,omitempty"`
+	Page   int    `json:"page,omitempty"`
+}
+
+func (s *GuestStoreService) List(req ListStoreRequest) (*ListStoreResponse, error) {
 	var result ListStoreResponse
 	_, err := s.client.newRequest(s.locationID).
+		SetBody(req).
 		SetResult(&result).
 		Post("/guest/store/list")
 	if err != nil {
@@ -345,9 +378,16 @@ type ListTagResponse struct {
 	} `json:"body"`
 }
 
-func (s *GuestTagService) List() (*ListTagResponse, error) {
+type ListTagRequest struct {
+	Name  *string `json:"name,omitempty"`
+	Limit int     `json:"limit,omitempty"`
+	Page  int     `json:"page,omitempty"`
+}
+
+func (s *GuestTagService) List(req ListTagRequest) (*ListTagResponse, error) {
 	var result ListTagResponse
 	_, err := s.client.newRequest(s.locationID).
+		SetBody(req).
 		SetResult(&result).
 		Post("/guest/tag/list")
 	if err != nil {

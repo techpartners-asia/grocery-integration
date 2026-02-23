@@ -54,6 +54,8 @@ type Config struct {
 	Password      string
 	LocationID    string
 	SuperAppToken string
+	RestyClient   *resty.Client
+	ErrorHandler  func(resp *resty.Response) error
 }
 
 func NewClient(config Config) (*Client, error) {
@@ -61,7 +63,10 @@ func NewClient(config Config) (*Client, error) {
 		return nil, fmt.Errorf("BaseURL is required")
 	}
 
-	r := resty.New()
+	r := config.RestyClient
+	if r == nil {
+		r = resty.New()
+	}
 
 	version := config.Version
 	if version == "" {
@@ -75,6 +80,15 @@ func NewClient(config Config) (*Client, error) {
 
 	r.SetBasicAuth(config.Username, config.Password)
 	r.SetHeader("Location-Id", config.LocationID)
+
+	if config.ErrorHandler != nil {
+		r.AddResponseMiddleware(func(c *resty.Client, resp *resty.Response) error {
+			if resp.IsError() {
+				return config.ErrorHandler(resp)
+			}
+			return nil
+		})
+	}
 
 	c := &Client{resty: r, superAppToken: config.SuperAppToken}
 
