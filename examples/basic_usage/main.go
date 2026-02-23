@@ -11,7 +11,7 @@ import (
 func main() {
 	// Initialize the client
 	client, err := zahii.NewClient(zahii.Config{
-		BaseURL:  "https://api.zahii.mn/api",
+		BaseURL:  "https://api.example.com",
 		Username: "super-app",
 		Password: "password-here",
 

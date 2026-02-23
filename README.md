@@ -33,7 +33,7 @@ import (
 
 func main() {
 	client, err := zahii.NewClient(zahii.Config{
-		BaseURL:  "https://api.zahii.mn/api",
+		BaseURL:  "https://api.example.com",
 		Username: "super-app",
 		Password: "password-here",
 		// LocationID: "optional-location-id",
@@ -103,7 +103,7 @@ This is extremely useful if you want to pipe API requests into your own instrume
 ```go
 // Using a custom hook to catch and log all requests
 client, err := zahii.NewClient(zahii.Config{
-    BaseURL: "https://api.zahii.mn/api",
+    BaseURL: "https://api.example.com",
     
     // Optional: catch every request/response explicitly
     RequestResponseLogger: func(req *resty.Request, resp *resty.Response) {
