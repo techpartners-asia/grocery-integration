@@ -14,30 +14,29 @@ type Client struct {
 	token         string
 	locationID    string
 
-	Customer struct {
-		Branch       *BranchService
-		Comment      *CustomerCommentService
+	Product      *ProductService
+	Category     *CategoryService
+	Store        *StoreService
+	Reference    *ReferenceService
+	Loyalty      *LoyaltyService
+	Tag          *TagService
+	Branch       *BranchService
+	OrderMessage *OrderMessageService
+
+	User struct {
+		Comment      *CommentService
 		Coupon       *CouponService
-		Imap         *CustomerImapService
+		Imap         *ImapService
 		Location     *LocationService
-		Loyalty      *LoyaltyService
+		Loyalty      *UserLoyaltyService
 		Notification *NotificationService
 		Order        *OrderService
-		Profile      *CustomerProfileService
-		Reference    *CustomerReferenceService
+		Profile      *ProfileService
+		Reference    *UserReferenceService
 		Wishlist     *WishlistService
 	}
 
-	Guest struct {
-		Category     *GuestCategoryService
-		Customer     *GuestCustomerService
-		Loyalty      *GuestLoyaltyService
-		OrderMessage *GuestOrderMessageService
-		Product      *GuestProductService
-		Reference    *GuestReferenceService
-		Store        *GuestStoreService
-		Tag          *GuestTagService
-	}
+	Customer *CustomerService
 
 	SuperApp struct {
 		Authenticate *SuperAppAuthenticateService
@@ -107,26 +106,26 @@ func NewClient(config Config) (*Client, error) {
 
 	c := &Client{resty: r, superAppToken: config.SuperAppToken, locationID: config.LocationID}
 
-	c.Customer.Branch = &BranchService{client: c}
-	c.Customer.Comment = &CustomerCommentService{client: c}
-	c.Customer.Coupon = &CouponService{client: c}
-	c.Customer.Imap = &CustomerImapService{client: c}
-	c.Customer.Location = &LocationService{client: c}
-	c.Customer.Loyalty = &LoyaltyService{client: c}
-	c.Customer.Notification = &NotificationService{client: c}
-	c.Customer.Order = &OrderService{client: c}
-	c.Customer.Profile = &CustomerProfileService{client: c}
-	c.Customer.Reference = &CustomerReferenceService{client: c}
-	c.Customer.Wishlist = &WishlistService{client: c}
+	c.Product = &ProductService{client: c}
+	c.Category = &CategoryService{client: c}
+	c.Store = &StoreService{client: c}
+	c.Reference = &ReferenceService{client: c}
+	c.Loyalty = &LoyaltyService{client: c}
+	c.Tag = &TagService{client: c}
+	c.Customer = &CustomerService{client: c}
+	c.Branch = &BranchService{client: c}
+	c.OrderMessage = &OrderMessageService{client: c}
 
-	c.Guest.Category = &GuestCategoryService{client: c}
-	c.Guest.Customer = &GuestCustomerService{client: c}
-	c.Guest.Loyalty = &GuestLoyaltyService{client: c}
-	c.Guest.OrderMessage = &GuestOrderMessageService{client: c}
-	c.Guest.Product = &GuestProductService{client: c}
-	c.Guest.Reference = &GuestReferenceService{client: c}
-	c.Guest.Store = &GuestStoreService{client: c}
-	c.Guest.Tag = &GuestTagService{client: c}
+	c.User.Comment = &CommentService{client: c}
+	c.User.Coupon = &CouponService{client: c}
+	c.User.Imap = &ImapService{client: c}
+	c.User.Location = &LocationService{client: c}
+	c.User.Loyalty = &UserLoyaltyService{client: c}
+	c.User.Notification = &NotificationService{client: c}
+	c.User.Order = &OrderService{client: c}
+	c.User.Profile = &ProfileService{client: c}
+	c.User.Reference = &UserReferenceService{client: c}
+	c.User.Wishlist = &WishlistService{client: c}
 
 	c.SuperApp.Authenticate = &SuperAppAuthenticateService{client: c}
 
@@ -137,28 +136,26 @@ func (c *Client) SetLocationID(id string) *Client {
 	c.locationID = id
 	c.resty.SetHeader("Location-Id", id)
 
-	// Propagate to services
-	if c.Customer.Branch != nil {
-		c.Customer.Branch.SetLocationID(id)
+	if c.Product != nil {
+		c.Product.SetLocationID(id)
 	}
-	if c.Customer.Order != nil {
-		c.Customer.Order.SetLocationID(id)
+	if c.Category != nil {
+		c.Category.SetLocationID(id)
 	}
-	if c.Customer.Location != nil {
-		c.Customer.Location.SetLocationID(id)
+	if c.Branch != nil {
+		c.Branch.SetLocationID(id)
 	}
-	if c.Customer.Wishlist != nil {
-		c.Customer.Wishlist.SetLocationID(id)
+	if c.User.Order != nil {
+		c.User.Order.SetLocationID(id)
 	}
-	if c.Customer.Comment != nil {
-		c.Customer.Comment.SetLocationID(id)
+	if c.User.Location != nil {
+		c.User.Location.SetLocationID(id)
 	}
-
-	if c.Guest.Product != nil {
-		c.Guest.Product.SetLocationID(id)
+	if c.User.Wishlist != nil {
+		c.User.Wishlist.SetLocationID(id)
 	}
-	if c.Guest.Category != nil {
-		c.Guest.Category.SetLocationID(id)
+	if c.User.Comment != nil {
+		c.User.Comment.SetLocationID(id)
 	}
 
 	return c

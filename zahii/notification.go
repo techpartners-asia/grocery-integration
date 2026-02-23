@@ -29,7 +29,7 @@ func (s *NotificationService) GetCurrentNotifications() (*ListNotificationRespon
 	var result ListNotificationResponse
 	_, err := s.client.newRequest(s.locationID).
 		SetResult(&result).
-		Get("/customer/notification/current")
+		Get("/user/notification/current")
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +40,7 @@ func (s *NotificationService) MarkAllRead() (*BaseResponse, error) {
 	var result BaseResponse
 	_, err := s.client.newRequest(s.locationID).
 		SetResult(&result).
-		Post("/customer/notification/base/mark-all-read")
+		Post("/user/notification/base/mark-all-read")
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +52,7 @@ func (s *NotificationService) Read(id uint) (*BaseResponse, error) {
 	_, err := s.client.newRequest(s.locationID).
 		SetPathParam("id", fmt.Sprintf("%d", id)).
 		SetResult(&result).
-		Post("/customer/notification/base/read/{id}")
+		Post("/user/notification/base/read/{id}")
 	if err != nil {
 		return nil, err
 	}

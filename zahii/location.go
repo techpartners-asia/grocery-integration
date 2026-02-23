@@ -83,7 +83,7 @@ func (s *LocationService) Create(req SaveLocationRequest) (*LocationResponse, er
 	_, err := s.client.newRequest(s.locationID).
 		SetBody(req).
 		SetResult(&result).
-		Post("/customer/location/create")
+		Post("/user/location/create")
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +94,7 @@ func (s *LocationService) Delete(id uint) (*BaseResponse, error) {
 	var result BaseResponse
 	_, err := s.client.newRequest(s.locationID).
 		SetResult(&result).
-		Delete(fmt.Sprintf("/customer/location/delete/%d", id))
+		Delete(fmt.Sprintf("/user/location/delete/%d", id))
 	if err != nil {
 		return nil, err
 	}
@@ -119,7 +119,7 @@ func (s *LocationService) List() (*ListLocationResponse, error) {
 	var result ListLocationResponse
 	_, err := s.client.newRequest(s.locationID).
 		SetResult(&result).
-		Get("/customer/location/list")
+		Get("/user/location/list")
 	if err != nil {
 		return nil, err
 	}
@@ -135,7 +135,7 @@ func (s *LocationService) ListPolygon() (*ListPolygonResponse, error) {
 	var result ListPolygonResponse
 	_, err := s.client.newRequest(s.locationID).
 		SetResult(&result).
-		Get("/customer/location/polygon/list")
+		Get("/user/location/polygon/list")
 	if err != nil {
 		return nil, err
 	}
@@ -147,7 +147,7 @@ func (s *LocationService) Update(id uint, req SaveLocationRequest) (*LocationRes
 	_, err := s.client.newRequest(s.locationID).
 		SetBody(req).
 		SetResult(&result).
-		Put(fmt.Sprintf("/customer/location/update/%d", id))
+		Put(fmt.Sprintf("/user/location/update/%d", id))
 	if err != nil {
 		return nil, err
 	}
@@ -164,7 +164,7 @@ func (s *LocationService) UpdateLatLong(id uint, req UpdateLatLongRequest) (*Loc
 	_, err := s.client.newRequest(s.locationID).
 		SetBody(req).
 		SetResult(&result).
-		Put(fmt.Sprintf("/customer/location/update-lat-long/%d", id))
+		Put(fmt.Sprintf("/user/location/update-lat-long/%d", id))
 	if err != nil {
 		return nil, err
 	}
@@ -180,7 +180,7 @@ func (s *LocationService) UpdateRanks(req UpdateRanksRequest) (*BaseResponse, er
 	_, err := s.client.newRequest(s.locationID).
 		SetBody(req).
 		SetResult(&result).
-		Put("/customer/location/update-ranks")
+		Put("/user/location/update-ranks")
 	if err != nil {
 		return nil, err
 	}

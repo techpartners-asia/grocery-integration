@@ -50,7 +50,7 @@ func (s *OrderService) CreateOrder(req CreateOrderRequest) (*CreateOrderResponse
 	_, err := s.client.newRequest(s.locationID).
 		SetBody(req).
 		SetResult(&result).
-		Post("/customer/order/create")
+		Post("/user/order/create")
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +67,7 @@ func (s *OrderService) GetOrder(uid string) (*GetOrderResponse, error) {
 	_, err := s.client.newRequest(s.locationID).
 		SetPathParam("uid", uid).
 		SetResult(&result).
-		Get("/customer/order/get/{uid}")
+		Get("/user/order/get/{uid}")
 	if err != nil {
 		return nil, err
 	}
@@ -83,7 +83,7 @@ func (s *OrderService) ListActive() (*ListOrderResponse, error) {
 	var result ListOrderResponse
 	_, err := s.client.newRequest(s.locationID).
 		SetResult(&result).
-		Post("/customer/order/active/list")
+		Post("/user/order/active/list")
 	if err != nil {
 		return nil, err
 	}
@@ -95,7 +95,7 @@ func (s *OrderService) CheckOrder(req CreateOrderRequest) (*CreateOrderResponse,
 	_, err := s.client.newRequest(s.locationID).
 		SetBody(req).
 		SetResult(&result).
-		Post("/customer/order/check")
+		Post("/user/order/check")
 	if err != nil {
 		return nil, err
 	}
@@ -119,7 +119,7 @@ func (s *OrderService) ListDeliverTime() (*ListDeliverTimeResponse, error) {
 	var result ListDeliverTimeResponse
 	_, err := s.client.newRequest(s.locationID).
 		SetResult(&result).
-		Get("/customer/order/deliver_time/list")
+		Get("/user/order/deliver_time/list")
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +136,7 @@ func (s *OrderService) GetEbarimt(orderUID string) (*EbarimtResponse, error) {
 	_, err := s.client.newRequest(s.locationID).
 		SetPathParam("uid", orderUID).
 		SetResult(&result).
-		Get("/customer/order/ebarimt/{uid}")
+		Get("/user/order/ebarimt/{uid}")
 	if err != nil {
 		return nil, err
 	}
@@ -157,7 +157,7 @@ func (s *OrderService) GetOrderHistory(req OrderHistoryRequest) (*ListOrderRespo
 	_, err := s.client.newRequest(s.locationID).
 		SetBody(req).
 		SetResult(&result).
-		Post("/customer/order/history/cursor")
+		Post("/user/order/history/cursor")
 	if err != nil {
 		return nil, err
 	}
@@ -174,7 +174,7 @@ func (s *OrderService) CreateOrderPayment(req OrderPaymentRequest) (*BaseRespons
 	_, err := s.client.newRequest(s.locationID).
 		SetBody(req).
 		SetResult(&result).
-		Post("/customer/order/payment")
+		Post("/user/order/payment")
 	if err != nil {
 		return nil, err
 	}
@@ -190,7 +190,7 @@ func (s *OrderService) GetOrderSuggestions(req OrderSuggestRequest) (*ListProduc
 	_, err := s.client.newRequest(s.locationID).
 		SetBody(req).
 		SetResult(&result).
-		Post("/customer/order/suggest/items")
+		Post("/user/order/suggest/items")
 	if err != nil {
 		return nil, err
 	}
@@ -202,7 +202,7 @@ func (s *OrderService) CancelOrder(orderUID string) (*BaseResponse, error) {
 	_, err := s.client.newRequest(s.locationID).
 		SetBody(map[string]string{"order_uid": orderUID}).
 		SetResult(&result).
-		Post("/customer/order/cancel")
+		Post("/user/order/cancel")
 	if err != nil {
 		return nil, err
 	}

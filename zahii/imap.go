@@ -1,22 +1,22 @@
 package zahii
 
-type CustomerImapService service
+type ImapService service
 
 type ImapSsidResponse struct {
 	BaseResponse
 	Body string `json:"body"`
 }
 
-func (s *CustomerImapService) SetLocationID(id string) *CustomerImapService {
+func (s *ImapService) SetLocationID(id string) *ImapService {
 	s.locationID = id
 	return s
 }
 
-func (s *CustomerImapService) GetSsid() (*ImapSsidResponse, error) {
+func (s *ImapService) GetSsid() (*ImapSsidResponse, error) {
 	var result ImapSsidResponse
 	_, err := s.client.newRequest(s.locationID).
 		SetResult(&result).
-		Get("/customer/imap/ssid")
+		Get("/user/imap/ssid")
 	if err != nil {
 		return nil, err
 	}

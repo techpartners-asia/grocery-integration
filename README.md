@@ -10,10 +10,11 @@ go get github.com/techpartners-asia/grocery-integration
 
 ## Overview
 
-This SDK provides a convenient, strongly-typed wrapper around the Zahii Grocery API. It uses `resty.dev/v3` for underlying HTTP networking and exposes three main service sets:
-- **Guest**: Services accessible indiscriminately or with basic read scopes (e.g., categories, stores, products).
-- **Customer**: Authenticated services used for customer actions (e.g., orders, wishlist, profile).
-- **SuperApp**: Services related to SuperApp authentication flows.
+This SDK provides a convenient, strongly-typed wrapper around the Zahii Grocery API. It uses `resty.dev/v3` for underlying HTTP networking and exposes services organized by auth requirement:
+- **Public** (no auth): `Product`, `Category`, `Store`, `Reference`, `Loyalty`, `Tag`, `Branch`, `OrderMessage`. Access via `client.Product`, `client.Category`, etc.
+- **User** (auth required): `Order`, `Location`, `Comment`, `Wishlist`, `Profile`, `Coupon`, `Imap`, `Notification`, `Reference`. Access via `client.User.Order`, `client.User.Location`, etc.
+- **Auth**: `Customer` (e.g. `IsUserExists`). Access via `client.Customer`.
+- **SuperApp**: `Authenticate`. Access via `client.SuperApp.Authenticate`.
 
 ## Usage
 
@@ -58,7 +59,7 @@ You can configure the client inline to update headers post-initialization:
 // Switch location dynamically context
 client.SetLocationID("store-1234")
 
-// Setup token for a Customer authenticated session
+// Setup token for an authenticated user session
 client.SetAuthToken("eyJhbGciOi...")
 ```
 
@@ -90,7 +91,7 @@ client, _ := zahii.NewClient(zahii.Config{
 })
 
 // 2. The error from the handler directly propagates to SDK caller methods
-_, err := client.Customer.Profile.GetProfile(zahii.InfoRequestDTO{})
+_, err := client.User.Profile.GetProfile(zahii.InfoRequestDTO{})
 if err != nil {
     // If the server answered 401 Unauthorized with {"message": "Invalid token"}, 
     // this prints: "API failed with 401: Invalid token"
@@ -125,18 +126,18 @@ client, err := zahii.NewClient(zahii.Config{
 
 ### Examples
 
-#### Calling a Guest Service (Listing Categories)
+#### Calling a Public Service (Listing Categories)
 ```go
-categories, err := client.Guest.Category.List(zahii.ListCategoryRequest{Active: true})
+categories, err := client.Category.List(zahii.ListCategoryRequest{Active: true})
 if err != nil {
     log.Fatalf("Error: %v", err)
 }
 fmt.Printf("Found %d categories\n", len(categories.Body))
 ```
 
-#### Calling a Customer Service (Creating a Comment)
+#### Calling a User Service (Creating a Comment)
 ```go
-commentResp, err := client.Customer.Comment.Create(zahii.CreateCommentRequest{
+commentResp, err := client.User.Comment.Create(zahii.CreateCommentRequest{
     ProductID: 359,
     Body:      "Great product!",
     Rate:      5,
@@ -151,7 +152,7 @@ fmt.Printf("Comment created (ID: %d)\n", commentResp.Body.ID)
 #### Creating an Order (with SetLocationID)
 ```go
 // SetLocationID is required before order operations — chain it on the service
-orderResp, err := client.Customer.Order.SetLocationID("5196").CreateOrder(zahii.CreateOrderRequest{
+orderResp, err := client.User.Order.SetLocationID("5196").CreateOrder(zahii.CreateOrderRequest{
     BranchID:           2,
     CustomerLocationID: 5196,
     DeliverTimeID:      19,
@@ -168,37 +169,40 @@ fmt.Printf("Order placed: %s\n", orderResp.Body.OrderUID)
 
 // Or set it once on the client and reuse for all subsequent calls
 client.SetLocationID("5196")
-client.Customer.Order.CheckOrder(req)
-client.Customer.Order.CreateOrder(req)
+client.User.Order.CheckOrder(req)
+client.User.Order.CreateOrder(req)
 ```
 
 For more details, see `examples/basic_usage/main.go`.
 
 ## Capabilities
 
-### `Guest` Services
+### Public Services (no auth)
 - `Category`: List and manage categories.
-- `Customer`: Handle customer registration/status context.
 - `Loyalty`: Access general loyalty policies and tiers.
-- `OrderMessage`: Messaging utilities for orders.
 - `Product`: List, search, and view single products.
 - `Reference`: Configuration and common reference data.
 - `Store`: Location and active branches data.
 - `Tag`: Product metadata tags and labels.
+- `Branch`: List branches.
+- `OrderMessage`: Order messaging utilities.
 
-### `Customer` Services
+### User Services (auth required)
 - `Comment`: Product and shopping/driver reviews.
 - `Coupon`: View and apply coupons.
 - `Imap`: Map-related interactions.
-- `Location`: Managing customer addresses.
+- `Location`: Managing user addresses.
 - `Loyalty`: Earned points and history.
 - `Notification`: In-app notification feeds.
 - `Order`: Creation, modification, and history of grocery deliveries.
 - `Profile`: Manage account details.
-- `Reference`: Secure reference sets.
+- `Reference`: Secure reference sets (e.g. job applications).
 - `Wishlist`: Saved items.
 
-### `SuperApp` Services
+### Auth Services
+- `Customer`: User existence check (`IsUserExists`).
+
+### SuperApp Services
 - `Authenticate`: Super-app authentication.
 
 ## License

@@ -1,6 +1,6 @@
 package zahii
 
-type CustomerCommentService service
+type CommentService service
 
 type CreateCommentRequest struct {
 	Body         string `json:"body"`
@@ -11,7 +11,7 @@ type CreateCommentRequest struct {
 	Title        string `json:"title"`
 }
 
-func (s *CustomerCommentService) SetLocationID(id string) *CustomerCommentService {
+func (s *CommentService) SetLocationID(id string) *CommentService {
 	s.locationID = id
 	return s
 }
@@ -23,12 +23,12 @@ type CreateCommentResponse struct {
 	} `json:"body"`
 }
 
-func (s *CustomerCommentService) Create(req CreateCommentRequest) (*CreateCommentResponse, error) {
+func (s *CommentService) Create(req CreateCommentRequest) (*CreateCommentResponse, error) {
 	var result CreateCommentResponse
 	_, err := s.client.newRequest(s.locationID).
 		SetBody(req).
 		SetResult(&result).
-		Post("/customer/comment/create")
+		Post("/user/comment/create")
 	if err != nil {
 		return nil, err
 	}
@@ -39,12 +39,12 @@ type DeleteCommentRequest struct {
 	ID uint `json:"id"`
 }
 
-func (s *CustomerCommentService) Delete(req DeleteCommentRequest) (*BaseResponse, error) {
+func (s *CommentService) Delete(req DeleteCommentRequest) (*BaseResponse, error) {
 	var result BaseResponse
 	_, err := s.client.newRequest(s.locationID).
 		SetBody(req).
 		SetResult(&result).
-		Delete("/customer/comment/delete")
+		Delete("/user/comment/delete")
 	if err != nil {
 		return nil, err
 	}
@@ -69,12 +69,12 @@ type ListCommentRequest struct {
 	Page  int `json:"page,omitempty"`
 }
 
-func (s *CustomerCommentService) List(req ListCommentRequest) (*ListCommentResponse, error) {
+func (s *CommentService) List(req ListCommentRequest) (*ListCommentResponse, error) {
 	var result ListCommentResponse
 	_, err := s.client.newRequest(s.locationID).
 		SetBody(req).
 		SetResult(&result).
-		Post("/customer/comment/list")
+		Post("/user/comment/list")
 	if err != nil {
 		return nil, err
 	}

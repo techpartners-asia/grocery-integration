@@ -16,7 +16,7 @@ func (s *CouponService) ListActiveCoupons() (*ListCouponResponse, error) {
 	var result ListCouponResponse
 	_, err := s.client.newRequest(s.locationID).
 		SetResult(&result).
-		Get("/customer/coupon/active")
+		Get("/user/loyalty/coupon/active")
 	if err != nil {
 		return nil, err
 	}
@@ -35,7 +35,7 @@ func (s *CouponService) CreateCoupon(req CreateCouponRequest) (*BaseResponse, er
 	_, err := s.client.newRequest(s.locationID).
 		SetBody(req).
 		SetResult(&result).
-		Post("/customer/coupon/create")
+		Post("/user/loyalty/coupon/create")
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func (s *CouponService) ListHistory() (*ListCouponResponse, error) {
 	var result ListCouponResponse
 	_, err := s.client.newRequest(s.locationID).
 		SetResult(&result).
-		Post("/customer/coupon/history")
+		Post("/user/loyalty/coupon/history")
 	if err != nil {
 		return nil, err
 	}

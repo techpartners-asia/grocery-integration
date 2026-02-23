@@ -1,17 +1,17 @@
 package zahii
 
-type CustomerProfileService service
+type ProfileService service
 
-func (s *CustomerProfileService) SetLocationID(id string) *CustomerProfileService {
+func (s *ProfileService) SetLocationID(id string) *ProfileService {
 	s.locationID = id
 	return s
 }
 
-func (s *CustomerProfileService) GetCredit() (*BaseResponse, error) {
+func (s *ProfileService) GetCredit() (*BaseResponse, error) {
 	var result BaseResponse
 	_, err := s.client.newRequest(s.locationID).
 		SetResult(&result).
-		Get("/customer/profile/credit")
+		Get("/user/profile/credit")
 	if err != nil {
 		return nil, err
 	}
@@ -28,12 +28,12 @@ type InfoRequestDTO struct {
 	PushToken string `json:"push_token,omitempty"`
 }
 
-func (s *CustomerProfileService) GetProfile(req InfoRequestDTO) (*BaseResponse, error) {
+func (s *ProfileService) GetProfile(req InfoRequestDTO) (*BaseResponse, error) {
 	var result BaseResponse
 	_, err := s.client.newRequest(s.locationID).
 		SetBody(req).
 		SetResult(&result).
-		Post("/customer/user/info")
+		Post("/user/info")
 	if err != nil {
 		return nil, err
 	}
@@ -49,12 +49,12 @@ type UpdateProfileRequest struct {
 	Register  string `json:"register,omitempty"`
 }
 
-func (s *CustomerProfileService) Update(req UpdateProfileRequest) (*BaseResponse, error) {
+func (s *ProfileService) Update(req UpdateProfileRequest) (*BaseResponse, error) {
 	var result BaseResponse
 	_, err := s.client.newRequest(s.locationID).
 		SetBody(req).
 		SetResult(&result).
-		Put("/customer/profile/update")
+		Put("/user/profile/update")
 	if err != nil {
 		return nil, err
 	}
@@ -65,12 +65,12 @@ type AgeCheckRequest struct {
 	BirthDate string `json:"birth_date"`
 }
 
-func (s *CustomerProfileService) AgeCheck(req AgeCheckRequest) (*BaseResponse, error) {
+func (s *ProfileService) AgeCheck(req AgeCheckRequest) (*BaseResponse, error) {
 	var result BaseResponse
 	_, err := s.client.newRequest(s.locationID).
 		SetBody(req).
 		SetResult(&result).
-		Post("/customer/profile/age_check")
+		Post("/user/profile/age_check")
 	if err != nil {
 		return nil, err
 	}
@@ -83,12 +83,12 @@ type PointHistoryRequest struct {
 	Sorter map[string]string `json:"sorter"`
 }
 
-func (s *CustomerProfileService) GetPointHistory(req PointHistoryRequest) (*BaseResponse, error) {
+func (s *ProfileService) GetPointHistory(req PointHistoryRequest) (*BaseResponse, error) {
 	var result BaseResponse
 	_, err := s.client.newRequest(s.locationID).
 		SetBody(req).
 		SetResult(&result).
-		Post("/customer/profile/point/history/cursor")
+		Post("/user/profile/point/history/cursor")
 	if err != nil {
 		return nil, err
 	}

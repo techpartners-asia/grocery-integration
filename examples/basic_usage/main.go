@@ -31,16 +31,15 @@ func main() {
 		log.Fatalf("Error initializing client: %v", err)
 	}
 
-	// Example 1: List categories using Guest.Category service
-	categories, err := client.Guest.Category.List(zahii.ListCategoryRequest{Active: true})
+	// Example 1: List categories (public, no auth required)
+	categories, err := client.Category.List(zahii.ListCategoryRequest{Active: true})
 	if err != nil {
 		log.Fatalf("Error listing categories: %v", err)
 	}
 	fmt.Printf("Found %d categories\n", len(categories.Body))
 
-	// Example 2: Create a comment using Customer.Comment service
-	// (Note: ListComment was changed to Create in this refactor to match Postman structure)
-	commentResp, err := client.Customer.Comment.Create(zahii.CreateCommentRequest{
+	// Example 2: Create a comment (auth required)
+	commentResp, err := client.User.Comment.Create(zahii.CreateCommentRequest{
 		Body: "Great product!",
 		Rate: 5,
 	})

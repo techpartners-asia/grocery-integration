@@ -4,51 +4,44 @@ import (
 	"fmt"
 )
 
-type GuestCategoryService service
+type CategoryService service
 
-func (s *GuestCategoryService) SetLocationID(id string) *GuestCategoryService {
+func (s *CategoryService) SetLocationID(id string) *CategoryService {
 	s.locationID = id
 	return s
 }
 
-type GuestProductService service
+type ProductService service
 
-func (s *GuestProductService) SetLocationID(id string) *GuestProductService {
+func (s *ProductService) SetLocationID(id string) *ProductService {
 	s.locationID = id
 	return s
 }
 
-type GuestCustomerService service
+type StoreService service
 
-func (s *GuestCustomerService) SetLocationID(id string) *GuestCustomerService {
+func (s *StoreService) SetLocationID(id string) *StoreService {
 	s.locationID = id
 	return s
 }
 
-type GuestLoyaltyService service
+type TagService service
 
-func (s *GuestLoyaltyService) SetLocationID(id string) *GuestLoyaltyService {
+func (s *TagService) SetLocationID(id string) *TagService {
 	s.locationID = id
 	return s
 }
 
-type GuestOrderMessageService service
+type LoyaltyService service
 
-func (s *GuestOrderMessageService) SetLocationID(id string) *GuestOrderMessageService {
+func (s *LoyaltyService) SetLocationID(id string) *LoyaltyService {
 	s.locationID = id
 	return s
 }
 
-type GuestStoreService service
+type OrderMessageService service
 
-func (s *GuestStoreService) SetLocationID(id string) *GuestStoreService {
-	s.locationID = id
-	return s
-}
-
-type GuestTagService service
-
-func (s *GuestTagService) SetLocationID(id string) *GuestTagService {
+func (s *OrderMessageService) SetLocationID(id string) *OrderMessageService {
 	s.locationID = id
 	return s
 }
@@ -62,12 +55,12 @@ type ListCategoryResponse struct {
 	Body []*Category `json:"body"`
 }
 
-func (s *GuestCategoryService) List(req ListCategoryRequest) (*ListCategoryResponse, error) {
+func (s *CategoryService) List(req ListCategoryRequest) (*ListCategoryResponse, error) {
 	var result ListCategoryResponse
 	_, err := s.client.newRequest(s.locationID).
 		SetBody(req).
 		SetResult(&result).
-		Post("/guest/category/list")
+		Post("/category/list")
 	if err != nil {
 		return nil, err
 	}
@@ -79,11 +72,11 @@ type GetCategoryResponse struct {
 	Body *Category `json:"body"`
 }
 
-func (s *GuestCategoryService) Get(id uint) (*GetCategoryResponse, error) {
+func (s *CategoryService) Get(id uint) (*GetCategoryResponse, error) {
 	var result GetCategoryResponse
 	_, err := s.client.newRequest(s.locationID).
 		SetResult(&result).
-		Get(fmt.Sprintf("/guest/category/get/%d", id))
+		Get(fmt.Sprintf("/category/get/%d", id))
 	if err != nil {
 		return nil, err
 	}
@@ -121,12 +114,12 @@ type ListProductResponse struct {
 	Body []*Product `json:"body"`
 }
 
-func (s *GuestProductService) List(req ListProductRequest) (*ListProductResponse, error) {
+func (s *ProductService) List(req ListProductRequest) (*ListProductResponse, error) {
 	var result ListProductResponse
 	_, err := s.client.newRequest(s.locationID).
 		SetBody(req).
 		SetResult(&result).
-		Post("/guest/product/list")
+		Post("/product/list")
 	if err != nil {
 		return nil, err
 	}
@@ -138,14 +131,14 @@ type GetProductResponse struct {
 	Body *Product `json:"body"`
 }
 
-func (s *GuestProductService) Get(id uint, locationID string) (*GetProductResponse, error) {
+func (s *ProductService) Get(id uint, locationID string) (*GetProductResponse, error) {
 	var result GetProductResponse
 	reqLocationID := s.locationID
 	if locationID != "" {
 		reqLocationID = locationID
 	}
 	req := s.client.newRequest(reqLocationID).SetResult(&result)
-	_, err := req.Get(fmt.Sprintf("/guest/product/get/%d", id))
+	_, err := req.Get(fmt.Sprintf("/product/get/%d", id))
 	if err != nil {
 		return nil, err
 	}
@@ -157,11 +150,11 @@ type UserExistsResponse struct {
 	Body bool `json:"body"`
 }
 
-func (s *GuestCustomerService) IsUserExists(firebaseUID string) (*UserExistsResponse, error) {
+func (s *CustomerService) IsUserExists(firebaseUID string) (*UserExistsResponse, error) {
 	var result UserExistsResponse
 	_, err := s.client.newRequest(s.locationID).
 		SetResult(&result).
-		Get(fmt.Sprintf("/guest/customer/is-user-exists/%s", firebaseUID))
+		Get(fmt.Sprintf("/auth/is-user-exists/%s", firebaseUID))
 	if err != nil {
 		return nil, err
 	}
@@ -174,12 +167,12 @@ type SimilarProductRequest struct {
 	Page      int  `json:"page,omitempty"`
 }
 
-func (s *GuestProductService) ListSimilar(req SimilarProductRequest) (*ListProductResponse, error) {
+func (s *ProductService) ListSimilar(req SimilarProductRequest) (*ListProductResponse, error) {
 	var result ListProductResponse
 	_, err := s.client.newRequest(s.locationID).
 		SetBody(req).
 		SetResult(&result).
-		Post("/guest/product/similar-product/list")
+		Post("/product/similar-product/list")
 	if err != nil {
 		return nil, err
 	}
@@ -191,11 +184,11 @@ type GetProductSetResponse struct {
 	Body *ProductSet `json:"body"`
 }
 
-func (s *GuestProductService) GetSetProduct(id uint) (*GetProductSetResponse, error) {
+func (s *ProductService) GetSetProduct(id uint) (*GetProductSetResponse, error) {
 	var result GetProductSetResponse
 	_, err := s.client.newRequest(s.locationID).
 		SetResult(&result).
-		Get(fmt.Sprintf("/guest/product/set-product/get/%d", id))
+		Get(fmt.Sprintf("/product/set-product/get/%d", id))
 	if err != nil {
 		return nil, err
 	}
@@ -207,22 +200,22 @@ type ListProductSetResponse struct {
 	Body []*ProductSet `json:"body"`
 }
 
-func (s *GuestProductService) ListSetProduct() (*ListProductSetResponse, error) {
+func (s *ProductService) ListSetProduct() (*ListProductSetResponse, error) {
 	var result ListProductSetResponse
 	_, err := s.client.newRequest(s.locationID).
 		SetResult(&result).
-		Post("/guest/product/set-product/list")
+		Post("/product/set-product/list")
 	if err != nil {
 		return nil, err
 	}
 	return &result, nil
 }
 
-func (s *GuestProductService) GetStoreProduct(id uint) (*GetProductResponse, error) {
+func (s *ProductService) GetStoreProduct(id uint) (*GetProductResponse, error) {
 	var result GetProductResponse
 	_, err := s.client.newRequest(s.locationID).
 		SetResult(&result).
-		Get(fmt.Sprintf("/guest/product/store-product/get/%d", id))
+		Get(fmt.Sprintf("/product/store-product/get/%d", id))
 	if err != nil {
 		return nil, err
 	}
@@ -254,12 +247,12 @@ type TotalProductRequest struct {
 	Search             string  `json:"search,omitempty"`
 }
 
-func (s *GuestProductService) GetTotal(req TotalProductRequest) (*TotalProductResponse, error) {
+func (s *ProductService) GetTotal(req TotalProductRequest) (*TotalProductResponse, error) {
 	var result TotalProductResponse
 	_, err := s.client.newRequest(s.locationID).
 		SetBody(req).
 		SetResult(&result).
-		Post("/guest/product/total")
+		Post("/product/total")
 	if err != nil {
 		return nil, err
 	}
@@ -277,12 +270,12 @@ type ListStoreRequest struct {
 	Page   int    `json:"page,omitempty"`
 }
 
-func (s *GuestStoreService) List(req ListStoreRequest) (*ListStoreResponse, error) {
+func (s *StoreService) List(req ListStoreRequest) (*ListStoreResponse, error) {
 	var result ListStoreResponse
 	_, err := s.client.newRequest(s.locationID).
 		SetBody(req).
 		SetResult(&result).
-		Post("/guest/store/list")
+		Post("/store/list")
 	if err != nil {
 		return nil, err
 	}
@@ -294,22 +287,22 @@ type ListLoyaltyLevelResponse struct {
 	Body []*LoyaltyLevel `json:"body"`
 }
 
-func (s *GuestLoyaltyService) ListLevels() (*ListLoyaltyLevelResponse, error) {
+func (s *LoyaltyService) ListLevels() (*ListLoyaltyLevelResponse, error) {
 	var result ListLoyaltyLevelResponse
 	_, err := s.client.newRequest(s.locationID).
 		SetResult(&result).
-		Get("/guest/loyalty/level/list")
+		Get("/loyalty/level/list")
 	if err != nil {
 		return nil, err
 	}
 	return &result, nil
 }
 
-func (s *GuestLoyaltyService) ListInvitations() (*ListInvitationResponse, error) {
+func (s *LoyaltyService) ListInvitations() (*ListInvitationResponse, error) {
 	var result ListInvitationResponse
 	_, err := s.client.newRequest(s.locationID).
 		SetResult(&result).
-		Get("/guest/loyalty/invitation/get-all")
+		Get("/loyalty/invitation/get-all")
 	if err != nil {
 		return nil, err
 	}
@@ -321,11 +314,11 @@ type GetInvitationResponse struct {
 	Body *Invitation `json:"body"`
 }
 
-func (s *GuestLoyaltyService) GetInvitation() (*GetInvitationResponse, error) {
+func (s *LoyaltyService) GetInvitation() (*GetInvitationResponse, error) {
 	var result GetInvitationResponse
 	_, err := s.client.newRequest(s.locationID).
 		SetResult(&result).
-		Get("/guest/loyalty/invitation/get-invitation")
+		Get("/loyalty/invitation/get-invitation")
 	if err != nil {
 		return nil, err
 	}
@@ -343,11 +336,11 @@ type GetOrderMessageResponse struct {
 	Body *OrderMessage `json:"body"`
 }
 
-func (s *GuestOrderMessageService) Get() (*GetOrderMessageResponse, error) {
+func (s *OrderMessageService) Get() (*GetOrderMessageResponse, error) {
 	var result GetOrderMessageResponse
 	_, err := s.client.newRequest(s.locationID).
 		SetResult(&result).
-		Get("/guest/order-message/get")
+		Get("/order-message/get")
 	if err != nil {
 		return nil, err
 	}
@@ -359,11 +352,11 @@ type ListOrderMessageResponse struct {
 	Body []*OrderMessage `json:"body"`
 }
 
-func (s *GuestOrderMessageService) List() (*ListOrderMessageResponse, error) {
+func (s *OrderMessageService) List() (*ListOrderMessageResponse, error) {
 	var result ListOrderMessageResponse
 	_, err := s.client.newRequest(s.locationID).
 		SetResult(&result).
-		Get("/guest/order-message/list")
+		Get("/order-message/list")
 	if err != nil {
 		return nil, err
 	}
@@ -384,12 +377,12 @@ type ListTagRequest struct {
 	Page  int     `json:"page,omitempty"`
 }
 
-func (s *GuestTagService) List(req ListTagRequest) (*ListTagResponse, error) {
+func (s *TagService) List(req ListTagRequest) (*ListTagResponse, error) {
 	var result ListTagResponse
 	_, err := s.client.newRequest(s.locationID).
 		SetBody(req).
 		SetResult(&result).
-		Post("/guest/tag/list")
+		Post("/tag/list")
 	if err != nil {
 		return nil, err
 	}

@@ -44,13 +44,13 @@ func TestClient_PerRequestAuth(t *testing.T) {
 	})
 
 	// First call to some API (e.g., Wishlist.List)
-	_, err := client.Customer.Wishlist.List()
+	_, err := client.User.Wishlist.List()
 	if err != nil {
 		t.Fatalf("first API call failed: %v", err)
 	}
 
 	// Second call to some API
-	_, err = client.Customer.Wishlist.List()
+	_, err = client.User.Wishlist.List()
 	if err != nil {
 		t.Fatalf("second API call failed: %v", err)
 	}
