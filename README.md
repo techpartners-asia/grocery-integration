@@ -36,7 +36,7 @@ func main() {
 		BaseURL:  "https://api.example.com",
 		Username: "super-app",
 		Password: "password-here",
-		// LocationID: "optional-location-id",
+		LocationID: "your-location-id",
 		// Version: zahii.V1, // defaults to "v1"
 		
 		// Optional: Global HTTP Error Handler Hook
@@ -61,6 +61,9 @@ client.SetLocationID("store-1234")
 // Setup token for a Customer authenticated session
 client.SetAuthToken("eyJhbGciOi...")
 ```
+
+> [!IMPORTANT]
+> **`SetLocationID` is required** before calling order-related methods (e.g., `Order.Check`, `Order.Create`). The backend uses the `Location-Id` header to route requests to the correct branch. If not set, order operations will fail.
 
 ### Global Error Handling
 
@@ -134,13 +137,39 @@ fmt.Printf("Found %d categories\n", len(categories.Body))
 #### Calling a Customer Service (Creating a Comment)
 ```go
 commentResp, err := client.Customer.Comment.Create(zahii.CreateCommentRequest{
-    Body: "Great product!",
-    Rate: 5,
+    ProductID: 359,
+    Body:      "Great product!",
+    Rate:      5,
+    Title:     "Highly Recommended",
 })
 if err != nil {
     log.Fatalf("Error: %v", err)
 }
-fmt.Println(commentResp.Message)
+fmt.Printf("Comment created (ID: %d)\n", commentResp.Body.ID)
+```
+
+#### Creating an Order (with SetLocationID)
+```go
+// SetLocationID is required before order operations — chain it on the service
+orderResp, err := client.Customer.Order.SetLocationID("5196").CreateOrder(zahii.CreateOrderRequest{
+    BranchID:           2,
+    CustomerLocationID: 5196,
+    DeliverTimeID:      19,
+    Phone:              "99112233",
+    Type:               "delivery",
+    Items: []zahii.OrderCreateItem{
+        {ProductID: 359, Qty: 1},
+    },
+})
+if err != nil {
+    log.Fatalf("Error: %v", err)
+}
+fmt.Printf("Order placed: %s\n", orderResp.Body.OrderUID)
+
+// Or set it once on the client and reuse for all subsequent calls
+client.SetLocationID("5196")
+client.Customer.Order.CheckOrder(req)
+client.Customer.Order.CreateOrder(req)
 ```
 
 For more details, see `examples/basic_usage/main.go`.
